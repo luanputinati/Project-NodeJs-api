@@ -1,97 +1,90 @@
-var Customer = require('../app/models/customer');
+var repository = require('../repositories/customer-repository');
 
 //Rotas para produto
 //POST
-exports.post = function (req, res){
-    var customer = new Customer();
-    customer.nome = req.body.nome;
-    customer.email = req.body.email;
-    customer.password = req.body.password;
+exports.post = async (req, res) => {
 
-    // console.log(req.body);
-
-    customer.save(function(error){
-        if(error)
-            res.send(`Erro ao tentar salvar um novo usuário, ${error}`);
+    try{
+        await repository.post({
+            nome: req.body.nome,
+            email: req.body.email,
+            password: req.body.password
+        });
+        res.status(201).send({
+            message: 'Usuário cadastrado com sucesso.'
+        });
         
-        res.status(201).json({message: 'Usuário inserido com sucesso'});
-    });
+    } catch(error){
+        console.log(error);
+        res.status(500).send({
+            message: 'Falha ao processar requisição.'
+        });
+    }
 }
 
 //GET ALL
-exports.getAll = function(req, res){
-    Customer.find(function(err, prods){
-        if(err)
-            res.send(err);
-            
-        res.status(200).json({
-            message: "retorno ok de todos os usuário",
-            allProducts: prods
+exports.getAll = async(req, res) => {
+
+    try{
+        var data = await repository.getAll();
+        res.status(200).send(data);
+
+    } catch(error){
+        res.status(500).send({
+            message: "Falha ao processar requisição.",
+            erro: error
         });
-    });
+    }
 }
 
 //GET by ID
-exports.getById = function(req, res){
-    var id = req.params.customerId;
+exports.getById = async(req, res) => {
 
-    Customer.findById(id, function(err, customer){
-        if (err){
-            res.status(500).json({
-                message: "Erro ao tentar encontrar usuário ID mal informado"
-            });
-        }else if(customer == null){
-            res.status(400).json({
-                message: "usuário não encontrado para o ID informado"
-            });
-        }else{
-            res.status(200).json({
-                message: "usuário localizado com sucesso",
-                customer: customer
-            });
-        }
-    });
+    try{
+        var id = req.params.productId;
+        var data = await repository.getById(id);
+        res.status(200).send(data);
+
+    } catch (error){
+        res.status(500).send({
+            message: "Falha ao processar requisição.",
+            erro: error
+        });
+    }
 }
 
 //PUT
-exports.put = function(req, res){
-    var id = req.params.customerId;
-    console.log(id);
+exports.put = async(req, res) => {
+    
+    try{
+        var id = req.params.customerId;
+        var data = await repository.put(id, req.body);
+        res.status(200).send({
+            message: "Usuário atualizado com sucesso.",
+            dados: data
+        });
 
-    Customer.findById(id, function(err, customer){
-        if(err){
-            res.status(500).json({
-                message: "Erro ao tentar localizar o usuário"
-            });
-        } else if(customer == null){
-            res.status(400).json({
-                message: "usuário não encontrado para o ID informado"
-            });
-        } else{
-            customer.nome = req.body.nome;
-            customer.email = req.body.email;
-            customer.password = req.body.password;
-
-            customer.save(function(err){
-                if(err)
-                    res.send(`Erro ao tentar atualizar o usuário, ${err}`);
-                res.status(200).json({
-                    message: "usuário atualizado com sucesso"
-                });
-            });
-        }
-    });
+    } catch(error){
+        res.status(500).send({
+            message: "Falha ao processar requisição.",
+            erro: error
+        });
+    }
 }
 
 //DELETE
-exports.delete = function(req, res){
-    Customer.findByIdAndRemove(req.params.customerId, (err, customer) => {
-        if(err)
-            res.status(500).send(`Erro ao deletar, ${err}`);
-        var response = {
-            message: "usuário removido com sucesso",
-            id: customer.id
-        };
-        return res.status(200).send(response);
-    });
+exports.delete = async(req, res) => {
+    try{
+        var id = req.params.customerId;
+        await repository.delete(id);
+        res.status(200).send({
+            message: "Usuário removido com sucesso."
+        });
+
+    } catch(error){
+        res.status(500).send({
+            message: "Falha ao processar requisição.",
+            erro: error
+        });
+    }
 }
