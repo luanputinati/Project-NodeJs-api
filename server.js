@@ -17,16 +17,18 @@ var port = process.env.PORT || 3000;
 
 //Definindo as rotas
 var router = express.Router(); //intercepta todas as rotas
-var productRoute = require('./routes/product-route');
-var indexRoute = require('./routes/index-route');
-var categoryRoute = require('./routes/category-route');
+var productRoute = require('./src/routes/product-route');
+var indexRoute = require('./src/routes/index-route');
+var categoryRoute = require('./src/routes/category-route');
+var customerRoute = require('./src/routes/customer-route');
 
 //Rota principal
 app.use('/api', indexRoute);
 
-//Rota para produto e categoria
+//Rota para produto, categoria e usuário
 app.use('/api/produtos/', productRoute);
 app.use('/api/categorias/', categoryRoute);
+app.use('/api/usuarios/', customerRoute);
 
 app.listen(port, () => {
     console.log("Server is up and running", port);
