@@ -88,3 +88,18 @@ exports.delete = async(req, res) => {
         });
     }
 }
+
+exports.customerRegister = async(req, res) => {
+
+    try{
+        await repository.register(req.body.name, req.body.email, req.body.password);
+        res.status(201).json({
+            message: "Usuário registrado com sucesso"
+        });
+
+    } catch(error) {
+        res.status(500).json({
+            message: "Erro ao tentar criar usuário"
+        });
+    }   
+}

@@ -3,10 +3,11 @@ var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
 var productController = require('../controllers/product-controller');
+var authService = require('../services/auth-services');
 
 //Rotas para produto
 //POST => localhost:3000/api/produtos
-router.post('/', productController.post);
+router.post('/', authService.authorize, productController.post);
 
 //GET -> localhost:3000/api/proutos
 router.get('/', productController.getAll);

@@ -21,14 +21,22 @@ var productRoute = require('./src/routes/product-route');
 var indexRoute = require('./src/routes/index-route');
 var categoryRoute = require('./src/routes/category-route');
 var customerRoute = require('./src/routes/customer-route');
+var loginRoute = require('./src/routes/login-route');
 
 //Rota principal
 app.use('/api', indexRoute);
 
 //Rota para produto, categoria e usuário
 app.use('/api/produtos/', productRoute);
+
+//Rota para Categorias
 app.use('/api/categorias/', categoryRoute);
+
+//Rota para usuários
 app.use('/api/usuarios/', customerRoute);
+
+//Rota para login
+app.use('/api/login', loginRoute);
 
 app.listen(port, () => {
     console.log("Server is up and running", port);
